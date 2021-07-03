@@ -1,14 +1,17 @@
 import React from 'react';
 
+import * as Redux from 'redux';
+
+import { Map } from 'immutable';
+
 import Event from './Event';
 import FileSystem from './FileSystem';
 import StringSystem from './String';
 import Network from './Network';
 
-import * as Redux from 'redux';
 
 export function Core() {
-  /** @type {Redux.Store} */
+  /** @type {Redux.Store<Map>} */
   this.store = null;
 
   this.init = function init(store) {

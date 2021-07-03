@@ -20,15 +20,15 @@ const store = Redux.createStore(reducers);
 
 window.app = app;
 
+// Запуск приложения
+app.init(store);
+
 // Рендеринг интерфейса
 ReactDOM.render((
   <CoreProvider.Provider value={app}>
     <AppInterface />
   </CoreProvider.Provider>
 ), document.getElementById("root"));
-
-// Запуск приложения
-app.init(store);
 
 // Обновление экрана (для разработки)
 window.addEventListener("keydown", (ev) => {

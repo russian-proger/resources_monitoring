@@ -10,16 +10,8 @@ var count = 0;
 export default function AppInterface(_props) {
   // Таким образом получаем ядро приложения во всех компонентах
   const app = React.useContext(CoreProvider);
+  const [_count, forceUpdate] = React.useReducer(x => x + 1, 0);
 
-  const [state, setState] = React.useState({
-    activePanel: "main", // Текущая панель
-    activeProps: {},     // Свойства, передаваемые этому панелю
-    activeView: "main",  // Текущее окно
-    history: ["main"],   // История панелей для iosSwipeBack
-    props: {},           // История свойств
-    popout: null         // Для модальных окон
-  });
-  
   function openPopout() {
 
   }
@@ -27,19 +19,10 @@ export default function AppInterface(_props) {
   function closePopout() {
 
   }
-  
-  function openPanel() {
 
-  }
-
-  function closePanel() {
-    
-  }
-
-  function switchPanel() {
-    
-  }
-
+  const state = app.store.getState();
+  const activePanel = state.get("active_panel");
+  const activePopout = state.get("active_popout");
 
   React.useLayoutEffect(() => {
     app.Event.addEventListener("closepopout", closePopout);
@@ -48,25 +31,23 @@ export default function AppInterface(_props) {
       app.Event.removeEventListener("closepopout", closePopout);
       app.Event.removeEventListener("openpopout", openPopout);
     }
-  }, [state.activePanel, state.popout]);
+  }, [activePanel, activePopout]);
 
-  // Добавляем слушатели к событиям
-  React.useLayoutEffect(() => {
-    app.Event.addEventListener("openpanel" , openPanel);
-    app.Event.addEventListener("closepanel", closePanel);
-    app.Event.addEventListener("switchpanel", switchPanel);
-    return () => {
-      app.Event.removeEventListener("openpanel",  openPanel);
-      app.Event.removeEventListener("closepanel", closePanel);
-      app.Event.removeEventListener("switchpanel", switchPanel);
-    }
-  }, [state]);
+  React.useEffect(() => {
+    return app.store.subscribe(v => {
+      let newPanel = app.store.getState().get("active_panel");
+      if (newPanel != activePanel) forceUpdate();
+    });
+  });
 
   return (
     <>
       <Header />
       <main className="app-main">
         <Navigation />
+        <div className="panel">
+          {activePanel}
+        </div>
       </main>
     </>
   );

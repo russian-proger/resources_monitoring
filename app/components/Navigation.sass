@@ -1,8 +1,42 @@
 nav.app-navigation
   box-sizing: border-box
+  flex-shrink: 0
   width: 256px
-  height: 700px
+  height: 100%
 
   padding-top: 30px
   display: flex
   flex-direction: column
+  border-right: 1px solid #1f1f1f
+
+  & > .nav-item
+    box-sizing: border-box
+    width: 240px
+    height: 32px
+    padding-left: 20px
+
+    display: flex
+    align-items: center
+
+    cursor: pointer
+    border-radius: 0 16px 16px 0
+
+    &.active
+      background: #252525
+
+    &:hover
+      background: #2f2f2f
+
+    & > .nav-icon
+      width: 20px
+      height: 20px
+
+      & > img
+        width: 100%
+        filter: brightness(45)
+
+    & > .nav-name
+      margin-left: 10px
+      font-size: 14px
+
+      color: white

@@ -2,6 +2,7 @@ import React from 'react';
 import { CoreProvider } from '../core/Core';
 
 import Header from './Header';
+import Navigation from './Navigation';
 
 import "./AppInterface.sass";
 
@@ -64,6 +65,9 @@ export default function AppInterface(_props) {
   return (
     <>
       <Header />
+      <main className="app-main">
+        <Navigation />
+      </main>
     </>
   );
 }

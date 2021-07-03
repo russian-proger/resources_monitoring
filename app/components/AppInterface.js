@@ -1,6 +1,10 @@
 import React from 'react';
 import { CoreProvider } from '../core/Core';
 
+import Header from './Header';
+
+import "./AppInterface.sass";
+
 var count = 0;
 export default function AppInterface(_props) {
   // Таким образом получаем ядро приложения во всех компонентах
@@ -58,6 +62,8 @@ export default function AppInterface(_props) {
   }, [state]);
 
   return (
-    <></>
+    <>
+      <Header />
+    </>
   );
 }

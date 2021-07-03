@@ -15,16 +15,4 @@ export default function Network(self) {
       }
     }).then(res => res.json());
   }
-
-  this.sendResults = (subject_id, results) => {
-    this.requestAPI({ action: 'update-results', subject_id, results });
-  }
-
-  this.isPaid = (data) => this.requestAPI({ action: 'is-paid', ...data });
-
-  this.getSkills = (subject_id) => this.requestAPI({ action: 'get-skills', subject_id });
-
-  this.getStats = (subject_id) => this.requestAPI({ action: 'get-stats', subject_id });
-
-  this.getFreqs = (subject_id) => this.requestAPI({ action: 'get-freqs', subject_id });
 }

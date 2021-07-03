@@ -11,6 +11,9 @@ import AppInterface from './components/AppInterface';
 // Движок приложения
 import { Core, CoreProvider } from './core/Core';
 
+// Загрузка шрифтов
+import "./styles/fonts.sass";
+
 // Экземпляр класса-одиночки
 const app = new Core();
 const store = Redux.createStore(reducers);

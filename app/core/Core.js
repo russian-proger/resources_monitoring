@@ -5,9 +5,15 @@ import FileSystem from './FileSystem';
 import StringSystem from './String';
 import Network from './Network';
 
+import * as Redux from 'redux';
+
 export function Core() {
-  this.init = function init() {
-    // Сообщаем ВК, что приложение готово к работе
+  /** @type {Redux.Store} */
+  this.store = null;
+
+  this.init = function init(store) {
+    this.store = store;
+
     setInterval(() => this.Network.online(), 60 * 1000);
   };
 

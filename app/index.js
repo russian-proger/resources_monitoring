@@ -2,6 +2,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import * as Redux from 'redux';
+import reducers from './store/reducers';
+
 // Интерфейс приложения
 import AppInterface from './components/AppInterface';
 
@@ -10,6 +13,7 @@ import { Core, CoreProvider } from './core/Core';
 
 // Экземпляр класса-одиночки
 const app = new Core();
+const store = Redux.createStore(reducers);
 
 window.app = app;
 
@@ -21,7 +25,7 @@ ReactDOM.render((
 ), document.getElementById("root"));
 
 // Запуск приложения
-app.init();
+app.init(store);
 
 // Обновление экрана (для разработки)
 window.addEventListener("keydown", (ev) => {

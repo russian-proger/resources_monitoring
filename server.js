@@ -96,7 +96,6 @@ async function parseResourceByLink(link, resource_name) {
   try {
     res  = await fetch(link);
   } catch(e) {
-    console.log(`Трабл с URL: ${link}`);
     return null;
   } finally {
     process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = _v;
@@ -152,9 +151,9 @@ app.post('/api', async (req, res) => {
         return sendError("Некорректный запрос");
 
       let external_data = await parseResourceByLink(req.body.resource_link);
-      if (external_data == false) {
+      if (external_data == null) {
         response.status = false;
-        sendResponse();
+        return sendResponse();
       }
       let query_result = await insertResource({...req.body, ...external_data});
 

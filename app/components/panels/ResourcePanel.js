@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton, TextField, Button, makeStyles, CircularProgress } from '@material-ui/core';
+import { Modal, IconButton, TextField, Button, makeStyles, CircularProgress } from '@material-ui/core';
 import * as Dog from '@material-ui/data-grid';
 
 import AddIcon from '@material-ui/icons/Add';
@@ -27,23 +27,30 @@ const columns = [
     editable: true,
   },
   {
+    field: 'cost',
+    headerName: 'Цена',
+    sortable: false,
+    width: 200
+  },
+  {
+    field: 'code',
+    headerName: 'Код ресурса',
+    description: '',
+    sortable: false,
+    width: 200
+  },
+  {
     field: 'created_date',
-    headerName: 'Дата обновления',
+    headerName: 'Дата создания',
     width: 200,
     editable: false,
+    renderCell: p => p.formattedValue.slice(0, 10)
   },
   {
     field: 'link',
     headerName: 'Ссылка на ресурс',
     editable: false,
-    width: 350
-  },
-  {
-    field: 'code',
-    headerName: 'Код ресурса',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 200
+    width: 500
   }
 ];
 
@@ -66,7 +73,12 @@ export default function ResourcePanel(props) {
     app.Network.uploadResource({ provider_name, resource_name, resource_link }).then((response) => {
       setTimeout(() => {
         setUploadingResource(false);
-        app.store.dispatch(Actions.addResource(response.result));
+        console.log(response);
+        if (!response.status) {
+          alert("Проверьте корректность введённой ссылки :(");
+        } else {
+          app.store.dispatch(Actions.addResource(response.result));
+        }
       }, 1000);
     })
   }

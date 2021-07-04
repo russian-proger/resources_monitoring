@@ -53,6 +53,44 @@ app.get("/", (req, res) => {
 })
 
 
+async function insertResource(data) {
+
+  const conn = await pool.getConnection();
+  let result = await conn.execute(`
+    INSERT INTO resources
+    (resource_name, provider_name, link, cost, created_date, code)
+    VALUES
+    ('${data.resource_name}', '${data.provider_name}', '${data.resource_link}', '0 руб', CURRENT_TIMESTAMP, '123123')
+  `);
+  conn.release();
+  return result;
+}
+
+async function getResourceById(id) {
+  const conn = await pool.getConnection();
+  let result = await conn.execute(`SELECT * FROM resources WHERE id=${id}`);
+  conn.release();
+  return result;
+}
+
+async function getResources() {
+  const conn = await pool.getConnection();
+  let result = await conn.execute(`SELECT * FROM resources`);
+  conn.release();
+  return result;
+}
+
+async function deleteResourcesByIds(ids) {
+  const conn = await pool.getConnection();
+  let result = await conn.execute(`DELETE FROM resources WHERE id in (${ids.join(',')})`);
+  conn.release();
+  return result;
+}
+
+async function parseResourceByLink(link, resource_name) {
+  
+}
+
 /**
  * Обработка API
  */
@@ -65,90 +103,38 @@ app.get("/", (req, res) => {
     res.end();
     return ;
   }
+  
+  const sendResponse = () => {
+    res.send(JSON.stringify(response));
+    res.end();
+    return ;
+  }
 
   switch (req.body.action) {
-    case '': {
+    case 'upload-resource': {
+      if (!req.body.resource_link || !req.body.resource_name || !req.body.provider_name)
+        return sendError("Некорректный запрос");
 
-      break;
-    }
-    case 'update-results': {
-      const s_fname = `./cache/skills/${req.body.uid}/${req.body.subject_id}`;
-      let skills = fs.readFileSync(s_fname).toString('utf8').split(' ').map(v => parseFloat(v));
-      req.body.results.forEach((v, i) => {
-        let d = 0.25 + 0.75 * (1 - Math.min(v.duration / 60000, 1));
-        skills[v.id] = skills[v.id] * 0.8 + (v.result * 20) * d;
-      });
-      fs.writeFileSync(s_fname, skills.join(' '));
-      
-      const f_fname = `./cache/freqs/${req.body.uid}/${req.body.subject_id}`;
-      let freqs = fs.readFileSync(f_fname).toString('utf8').split(' ').map(v => parseFloat(v));
-      req.body.results.forEach(v => ++freqs[v.id]);
-      fs.writeFileSync(f_fname, freqs.join(' '));
-      
+      response.result = true;
 
-      let tasks_c = req.body.results.length;
-      let correct_c = 0;
-      let uid = req.body.uid;
-      let subject_id = req.body.subject_id;
+      let external_data = await parseResourceByLink(req.body.resource_link);
+      let query_result = await insertResource({...req.body, ...external_data});
 
-      req.body.results.forEach(v => correct_c += v.result);
-      const [{ insertId }] = await pool.execute(`INSERT INTO results(uid, tasks_c, correct_answers_c, subject_id) VALUES (${uid}, ${tasks_c}, ${correct_c}, ${subject_id});`);
-
-      let data = [tasks_c];
-      req.body.results.forEach(v => data.push(v.id, '"' + (v.answer == null || v.answer == undefined ? "" : v.answer) + '"', v.duration, v.result + 0));
-      fs.writeFileSync(`./cache/tests/${insertId}`, data.join(' '));
-      break;
+      response.result = (await getResourceById(query_result[0].insertId))[0][0];
+      return sendResponse();
     }
 
-    case 'is-paid': {
-      let [[info]] = await pool.execute(`SELECT \`balance\` FROM \`users\` WHERE \`uid\`=${ req.body.uid }`);
-      response.status = true;
-      response.result = info.balance <= 1000;
-      break;
+    case 'get-resources': {
+      response.result = (await getResources())[0];
+      return sendResponse();
     }
 
-    case 'get-skills': {
-      let fname = `./cache/skills/${req.body.uid}`;
+    case 'delete-resources': {
+      if (!req.body.ids)
+        return sendError("Некорректный запрос");
 
-      if (!fs.existsSync(fname)) {
-        fs.mkdirSync(fname);
-        subjects.forEach((v, i) => fs.writeFileSync(`${fname}/${i}`, new Array(300).fill(50).join(" ")));
-      }
-
-      response.result = fs.readFileSync(`${fname}/${req.body.subject_id}`).toString('utf8').split(' ').map(v => parseInt(v));
-      break;
-    }
-
-    case 'get-freqs': {
-      let fname = `./cache/freqs/${req.body.uid}`;
-
-      if (!fs.existsSync(fname)) {
-        fs.mkdirSync(fname);
-        subjects.forEach((v, i) => fs.writeFileSync(`${fname}/${i}`, new Array(300).fill(0).join(" ")));
-      }
-
-      response.result = fs.readFileSync(`${fname}/${req.body.subject_id}`).toString('utf8').split(' ').map(v => parseInt(v));
-      break;
-    }
-
-    case 'get-stats': {
-      if (!req.body.hasOwnProperty('subject_id')) {
-        response.status = false;
-        break;
-      }
-
-      let [results] = await pool.execute(`SELECT * FROM results WHERE uid=${req.body.uid} AND subject_id=${req.body.subject_id} ORDER BY id DESC`);
-      response.counts = (await pool.execute(`
-        SELECT
-          SUM(tasks_c) AS tasks_c,
-          SUM(correct_answers_c) AS correct_answers_c,
-          AVG(tasks_c) AS avg_tasks_c,
-          AVG(correct_answers_c) AS avg_correct_answers_c
-        FROM results
-        WHERE uid=${req.body.uid} AND subject_id=${req.body.subject_id}`)
-      )[0][0];
-      response.results = results;
-      break;
+      await deleteResourcesByIds(req.body.ids);
+      return sendResponse();
     }
 
     default: {
@@ -156,7 +142,7 @@ app.get("/", (req, res) => {
     }
   }
 
-  res.send(JSON.stringify(response));
+  sendError("Что-то пошло не так");
 });
 
 // Запуск сервера

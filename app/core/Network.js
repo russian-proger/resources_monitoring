@@ -6,7 +6,7 @@ export default function Network(self) {
   this.requestAPI = (params) => {
     // const seed = Math.random().toString(36).slice(2);
     // const secret = sha256.hmac(API_KEY, seed);
-    return fetch(URI_PREFIX + "/api", {
+    return fetch('/api', {
       method: 'POST',
       // body: JSON.stringify({ ...params, uid: UID, secret, seed }),
       body: JSON.stringify({ ...params }),
@@ -16,5 +16,7 @@ export default function Network(self) {
     }).then(res => res.json());
   }
 
-  this.
+  this.uploadResource = (params) => this.requestAPI({ action: 'upload-resource', ...params })
+  this.getResources = () => this.requestAPI({ action: 'get-resources' })
+  this.deleteResources = (ids) => this.requestAPI({ action: 'delete-resources', ids })
 }

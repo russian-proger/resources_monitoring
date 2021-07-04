@@ -1,10 +1,11 @@
 import React from 'react';
-import { TextField, Button } from '@material-ui/core';
-import { DataGrid } from '@material-ui/data-grid';
+import { TextField, Button, makeStyles } from '@material-ui/core';
+import * as Dog from '@material-ui/data-grid';
 
 import "./ResourcePanel.sass";
 import AddIcon from '@material-ui/icons/Add';
 
+/** @type {Dog.GridColumns} */
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
@@ -38,7 +39,14 @@ const rows = [
 
 ];
 
+const useStyles = makeStyles({
+  data_grid: {
+
+  }
+})
+
 export default function ResourcePanel(props) {
+  const classes = useStyles();
   return (
     <>
       <div className="panel resource-panel">
@@ -71,10 +79,12 @@ export default function ResourcePanel(props) {
           </div>
         </section>
         <section className="resources-table">
-          <DataGrid
+          <Dog.DataGrid
+            className={classes.data_grid}
             rows={rows}
             columns={columns}
             scrollbarSize={15}
+            disableExtendRowFullWidth={true}
             checkboxSelection
           />
         </section>

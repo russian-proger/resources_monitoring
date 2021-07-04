@@ -41,7 +41,7 @@ app.disable('x-powered-by');
 // Виртуализация сетевых директорий
 app.use('/assets', expressStaticGzip(__dirname.concat('/assets')));
 app.use('/static', expressStaticGzip(__dirname.concat('/static')));
-app.use('/dist', expressStaticGzip(__dirname.concat('/dist'), {}));
+app.use('/dist', expressStaticGzip(__dirname.concat('/dist')));
 
 // Включаем парсер body
 app.use(bodyParser.urlencoded({ extended: false }));

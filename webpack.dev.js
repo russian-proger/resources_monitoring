@@ -52,12 +52,12 @@ module.exports = {
     ]
   },
   plugins: [
-    new CompressionPlugin({
-      algorithm: 'gzip',
-      test: /\.js$|\.css$/,
-      threshold: 10240,
-      minRatio: 0.8,
-    }),
+    // new CompressionPlugin({
+    //   algorithm: 'gzip',
+    //   test: /\.js$|\.css$/,
+    //   threshold: 10240,
+    //   minRatio: 0.8,
+    // }),
     // new BrotliPlugin({
     //   test: /\.js$|\.css$/,
     //   threshold: 10240,

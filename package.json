@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/russian-proger/resources_monitoring#readme",
   "dependencies": {
+    "@material-ui/core": "^4.11.4",
+    "@material-ui/data-grid": "^4.0.0-alpha.33",
+    "@material-ui/icons": "^4.11.2",
     "body-parser": "^1.19.0",
     "brotli-webpack-plugin": "^1.1.0",
     "compression-webpack-plugin": "^8.0.1",

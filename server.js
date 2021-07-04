@@ -1,4 +1,5 @@
 const express = require('express');
+const fetch = require('node-fetch');
 const fs = require('fs');
 const http  = require('http');
 const https = require('https');
@@ -60,7 +61,7 @@ async function insertResource(data) {
     INSERT INTO resources
     (resource_name, provider_name, link, cost, created_date, code)
     VALUES
-    ('${data.resource_name}', '${data.provider_name}', '${data.resource_link}', '0 руб', CURRENT_TIMESTAMP, '123123')
+    ('${data.resource_name}', '${data.provider_name}', '${data.resource_link}', '${data.cost ?? '-'}', CURRENT_TIMESTAMP, '${data.code ?? '-'}')
   `);
   conn.release();
   return result;
@@ -88,13 +89,48 @@ async function deleteResourcesByIds(ids) {
 }
 
 async function parseResourceByLink(link, resource_name) {
-  
-}
+  let res;
+  let _v = process.env['NODE_TLS_REJECT_UNAUTHORIZED'];
+  process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
+  try {
+    res  = await fetch(link);
+  } catch(e) {
+    console.log(`Трабл с URL: ${link}`);
+    return null;
+  } finally {
+    process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = _v;
+  }
+
+  /** @type {string} */
+  let text = await res.text();
+  text = text.replaceAll(/ +/g, " ");
+  let result = { cost: null, code: null };
+
+  let pattern = /\d[\s\d]+[\.,]?[\s\d]+\s+р..?/gus;
+  let matches = text.match(pattern);
+  if (matches != null) {
+    result.cost = matches[0];
+  }
+
+  formatted_text = text.replaceAll(/<[\w\s\\\/"]+>/gus, '');
+  matches = formatted_text.match(pattern);
+  
+  if (matches != null && result.cost == null) {
+    result.cost = matches[0];
+  }
+
+  matches = text.match(/[\s\b]\d+\.\d+\.\d+\.\d+\..+?[\s\b]/g);
+  if (matches != null) {
+    result.code = matches[0];
+  }
+
+  return result;
+}
 /**
  * Обработка API
  */
- app.post('/api', async (req, res) => {
+app.post('/api', async (req, res) => {
   var response = { status: true };
   const sendError = (message) => {
     response.status = false;
@@ -115,9 +151,11 @@ async function parseResourceByLink(link, resource_name) {
       if (!req.body.resource_link || !req.body.resource_name || !req.body.provider_name)
         return sendError("Некорректный запрос");
 
-      response.result = true;
-
       let external_data = await parseResourceByLink(req.body.resource_link);
+      if (external_data == false) {
+        response.status = false;
+        sendResponse();
+      }
       let query_result = await insertResource({...req.body, ...external_data});
 
       response.result = (await getResourceById(query_result[0].insertId))[0][0];

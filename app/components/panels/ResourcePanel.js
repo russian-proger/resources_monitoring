@@ -39,16 +39,7 @@ const rows = [
   { id: "123", resource: "123", provider: "123", date: "123", status: "123" }
 ];
 
-const useStyles = makeStyles({
-  data_grid: {
-    // '& .MuiDataGrid-columnsContainer': {
-    //   width: 'fit-content'
-    // }
-  }
-})
-
 export default function ResourcePanel(props) {
-  const classes = useStyles();
   return (
     <>
       <div className="panel resource-panel">
@@ -82,12 +73,12 @@ export default function ResourcePanel(props) {
         </section>
         <section className="resources-table">
           <Dog.DataGrid
-            className={classes.data_grid}
             rows={rows}
             columns={columns}
             scrollbarSize={15}
             disableExtendRowFullWidth={true}
             checkboxSelection
+            disableSelectionOnClick
           />
         </section>
       </div>

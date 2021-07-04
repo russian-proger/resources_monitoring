@@ -106,7 +106,7 @@ async function parseResourceByLink(link, resource_name) {
   text = text.replaceAll(/ +/g, " ");
   let result = { cost: null, code: null };
 
-  let pattern = /\d[\s\d]+[\.,]?[\s\d]+\s+р..?/gus;
+  let pattern = /\d[\s\d]+[\.,]?[\s\d]+\s+(р|₽)..?/gus;
   let matches = text.match(pattern);
   if (matches != null) {
     result.cost = matches[0];

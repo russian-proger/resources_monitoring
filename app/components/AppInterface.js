@@ -11,6 +11,7 @@ import ResourcePanel   from './panels/ResourcePanel';
 import MonitoringPanel from './panels/MonitoringPanel';
 import UpdatesPanel    from './panels/UpdatesPanel';
 
+import LoadingLine from './LoadingLine';
 import "./AppInterface.sass";
 
 const theme = createMuiTheme({
@@ -58,12 +59,13 @@ export default function AppInterface(_props) {
   React.useEffect(() => {
     return app.store.subscribe(v => {
       let newPanel = app.store.getState().get("active_panel");
-      if (newPanel != activePanel) forceUpdate();
+      if (newPanel != activePanel) setTimeout(forceUpdate, 500);
     });
   });
 
   return (
     <ThemeProvider theme={theme}>
+      <LoadingLine />
       <Header />
       <main className="app-main">
         <Navigation />

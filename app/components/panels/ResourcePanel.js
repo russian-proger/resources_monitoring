@@ -9,39 +9,41 @@ import AddIcon from '@material-ui/icons/Add';
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
-    field: 'firstName',
+    field: 'resource',
     headerName: 'Наименование ресурса',
-    width: 150,
+    width: 260,
     editable: true,
   },
   {
-    field: 'lastName',
+    field: 'provider',
     headerName: 'Наименование поставщика',
-    width: 450,
+    width: 300,
     editable: true,
   },
   {
-    field: 'age',
+    field: 'date',
     headerName: 'Дата обновления',
-    width: 110,
+    width: 200,
     editable: true,
   },
   {
-    field: 'fullName',
+    field: 'status',
     headerName: 'Статус',
     description: 'This column has a value getter and is not sortable.',
     sortable: false,
-    width: 160
+    width: 130
   }
 ];
 
 const rows = [
-
+  { id: "123", resource: "123", provider: "123", date: "123", status: "123" }
 ];
 
 const useStyles = makeStyles({
   data_grid: {
-
+    // '& .MuiDataGrid-columnsContainer': {
+    //   width: 'fit-content'
+    // }
   }
 })
 

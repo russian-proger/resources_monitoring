@@ -11,7 +11,7 @@ export default function Header() {
       <div className="team-name">
         <span>Team:  7.spirit.13</span>
       </div>
-      <div className="logo"><img src="/static/images/7.spirit.13.png" /></div>
+      <div className="logo"><img src="/static/images/7.spirit.13.svg" /></div>
     </header>
   );
 }

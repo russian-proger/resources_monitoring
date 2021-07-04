@@ -16,7 +16,6 @@ import "./AppInterface.sass";
 
 const theme = createMuiTheme({
   palette: {
-    type: "dark",
     primary: {
       main: "#1976d2"
     }
